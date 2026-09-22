@@ -1,0 +1,27 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "PG Local",
+            "database": "Clinic",
+            "username": "postgres",
+            "password": "Minenhle@8",
+            "connectionTimeout": 30
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "dpg-dap7cbp42hec7395hj6g-a.virginia-postgres.render.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "ClinicFlow",
+            "database": "clinic_demo_g68o",
+            "username": "clinic_demo_g68o_user",
+            "password": "ztbFwdEYHvanDbBYnWwRuYSSq4r1dxUy"
+        }
+    ]
+}

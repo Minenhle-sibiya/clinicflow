@@ -1,18 +1,28 @@
 import { loadEnvFile } from 'node:process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import pg from 'pg';
 
+// Only load a local .env file if it exists (Render injects env vars directly)
 try {
-
-    loadEnvFile();
-}
-catch (error) {
-    console.error('Failed to load .env file:', error);
+  loadEnvFile();
+} catch {
+  // No .env file present in production — that's expected on Render.
 }
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { Pool } = pg;
 const app = express();
-const pool = new Pool();
+
+// Use DATABASE_URL when present (Render), otherwise fall back to local PG* vars
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    })
+  : new Pool();
+
 const port = Number(process.env.PORT ?? 3000);
 
 const receptionistStatuses = ['Scheduled', 'Arrived', 'Cancelled'];
@@ -246,6 +256,13 @@ app.patch(
     }
   }),
 );
+
+// Serve the built React app (production only — client/dist is created by the build step)
+const clientDist = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientDist));
+app.get(/^(?!\/api).*/, (_req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 app.use((error, _req, res, _next) => {
   console.error(error);
