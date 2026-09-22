@@ -2,7 +2,13 @@ import { loadEnvFile } from 'node:process';
 import express from 'express';
 import pg from 'pg';
 
-loadEnvFile();
+try {
+
+    loadEnvFile();
+}
+catch (error) {
+    console.error('Failed to load .env file:', error);
+}
 
 const { Pool } = pg;
 const app = express();
