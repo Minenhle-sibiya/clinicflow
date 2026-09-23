@@ -4,18 +4,16 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import pg from 'pg';
 
-// Only load a local .env file if it exists (Render injects env vars directly)
 try {
   loadEnvFile();
 } catch {
-  // No .env file present in production — that's expected on Render.
+  // No .env file present in production — expected on Render.
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { Pool } = pg;
 const app = express();
 
-// Use DATABASE_URL when present (Render), otherwise fall back to local PG* vars
 const pool = process.env.DATABASE_URL
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
@@ -257,7 +255,6 @@ app.patch(
   }),
 );
 
-// Serve the built React app (production only — client/dist is created by the build step)
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientDist));
 app.get(/^(?!\/api).*/, (_req, res) => {
